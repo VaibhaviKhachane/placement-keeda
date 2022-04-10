@@ -2,23 +2,32 @@ import { Link, useNavigate } from "react-router-dom"
 import { useState } from "react";
 import { useRecoilValue } from "recoil"
 import { roleState } from "../atoms/roleState"
+import toast, { Toaster } from 'react-hot-toast';
 
 export const Login = () => {
     const [email, setEmail] = useState("");
     const [passwd, setPasswd] = useState("");
     const role = useRecoilValue(roleState);
-    const router = useNavigate()
+    const navigate = useNavigate()
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         const baseUrl = "http://localhost:8080"
-        const res = await fetch(`${baseUrl}/api/log${role}`);
-
-        if (res) {
-            console.log(res);
-            if (res.body.password === passwd) {
-                router(`/${role}`)
-            }
+        let token = await fetch(`${baseUrl}/api/log${role}`,
+            {
+                method: "post",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ "email": email, "password": passwd })
+            });
+        if (token.status !== 400) {
+            navigate(`/${role}`);
+        }
+        else {
+            setEmail("");
+            setPasswd("");
+            toast.error(`Invalid email or password for ${role}`);
         }
     }
 
@@ -54,6 +63,10 @@ export const Login = () => {
                             className="p-5 bg-blue-500 rounded mt-5 font-semibold" >
                             Login
                         </button>
+                        <Toaster
+                            position="top-center"
+                            reverseOrder={false}
+                        />
                     </form>
                     <div className="grid place-items-center translate-y-10 hover:text-white text-gray-200">
                         <Link to="/signup">
