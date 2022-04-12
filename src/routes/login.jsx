@@ -1,19 +1,23 @@
 import { Link, useNavigate } from "react-router-dom"
 import { useState } from "react";
-import { useRecoilValue } from "recoil"
+import { useRecoilValue, useRecoilState } from "recoil"
 import { roleState } from "../atoms/roleState"
 import toast, { Toaster } from 'react-hot-toast';
+import { userState } from "../atoms/user"
+import { tokenState } from "../atoms/tokenState"
 
 export const Login = () => {
     const [email, setEmail] = useState("");
     const [passwd, setPasswd] = useState("");
     const role = useRecoilValue(roleState);
-    const navigate = useNavigate()
+    const [token, setToken] = useRecoilState(tokenState);
+    const navigate = useNavigate();
+    const [user, setUser] = useRecoilState(userState);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         const baseUrl = "http://localhost:8080"
-        let token = await fetch(`${baseUrl}/api/log${role}`,
+        let res = await fetch(`${baseUrl}/api/log${role}`,
             {
                 method: "post",
                 headers: {
@@ -21,7 +25,13 @@ export const Login = () => {
                 },
                 body: JSON.stringify({ "email": email, "password": passwd })
             });
-        if (token.status !== 400) {
+        const result = await res.text();
+        if (res.status === 200) {
+            setToken(result);
+            setUser({
+                email: email,
+                password: passwd,
+            })
             navigate(`/${role}`);
         }
         else {

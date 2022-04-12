@@ -2,7 +2,9 @@ import { Link, useNavigate } from "react-router-dom"
 import { useState } from "react"
 import toast, { Toaster } from "react-hot-toast"
 import { roleState } from "../atoms/roleState"
-import { useRecoilValue } from "recoil"
+import { useRecoilValue, useRecoilState } from "recoil"
+import { userState } from "../atoms/user"
+
 
 export const SignUp = () => {
     const [name, setName] = useState("");
@@ -13,6 +15,7 @@ export const SignUp = () => {
     const [contactNo, setContactNo] = useState("");
     const role = useRecoilValue(roleState);
     const navigate = useNavigate();
+    const [user, setUser] = useRecoilState(userState);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -33,7 +36,11 @@ export const SignUp = () => {
                 })
             });
         if (token.status !== 400) {
-            navigate(`/${role}`);
+            setUser({
+                email: email,
+                password: passwd
+            })
+            navigate(`/login`);
         }
         else {
             setEmail("");

@@ -12,9 +12,11 @@ import { roleState } from "./atoms/roleState";
 import { useRecoilValue } from "recoil";
 import { Profile } from "./routes/profile";
 import { Drives } from "./routes/drives";
+import { tokenState } from "./atoms/tokenState"
 
 function App() {
   const role = useRecoilValue(roleState);
+  const token = useRecoilValue(tokenState);
   return (
     <div className="App">
       <BrowserRouter>
@@ -22,11 +24,11 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
-          <Route path="/cmpny" element={<Company />} />
+          <Route path={`/cmpny`} element={<Company />} />
           <Route path="/stu" element={<h1>This is Student Page!</h1>} />
           <Route path="/tpo" element={<h1>This is TPO Page!</h1>} />
-          <Route path={`/${role}/profile`} element={<Profile />} />
-          <Route path={`/${role}/drives`} element={<Drives />} />
+          <Route path={`/cmpny/profile`} element={<Profile />} />
+          <Route path={`/cmpny/drives`} element={<Drives />} />
           <Route path="*" element={
             <div className="w-full min-h-screen grid place-items-center relative text-white bg-gray-900">
               <h1 className="font-semibold text-5xl select-none">404 | Page Not Found</h1>
