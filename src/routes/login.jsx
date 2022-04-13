@@ -1,6 +1,6 @@
-import { Link, useNavigate } from "react-router-dom"
+import { Link, useNavigate} from "react-router-dom"
 import { useState } from "react";
-import { useRecoilValue, useRecoilState } from "recoil"
+import { useRecoilValue, useRecoilState} from "recoil"
 import { roleState } from "../atoms/roleState"
 import toast, { Toaster } from 'react-hot-toast';
 import { userState } from "../atoms/user"
@@ -12,12 +12,12 @@ export const Login = () => {
     const role = useRecoilValue(roleState);
     const [token, setToken] = useRecoilState(tokenState);
     const navigate = useNavigate();
-    const [user, setUser] = useRecoilState(userState);
-
+    const [, setUser] = useRecoilState(userState)
+    const [, setCurrentUser] = useState({});
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const baseUrl = "http://localhost:8080"
-        let res = await fetch(`${baseUrl}/api/log${role}`,
+        // const baseUrl = "http://localhost:4000"
+        let res = await fetch(`/api/log${role}`,
             {
                 method: "post",
                 headers: {
@@ -32,15 +32,38 @@ export const Login = () => {
                 email: email,
                 password: passwd,
             })
-            navigate(`/${role}`);
+            
         }
         else {
             setEmail("");
             setPasswd("");
             toast.error(`Invalid email or password for ${role}`);
-        }
-    }
+        }  
 
+        
+
+        setTimeout(async()=>{
+            let currentUser = await fetch(`/api/log${role}/me`,{
+                method: "get",
+                headers: {
+                    "x-auth-token": token
+                }
+            });
+            const currUser = await currentUser.text();
+            if (currentUser.status === 200) {
+                setCurrentUser(currUser);
+                navigate(`/${role}`);
+            }
+            else {
+                setCurrentUser({});
+                toast.error(`Access denied. No token provided for ${role}`);
+            } 
+        },1000);
+        
+
+        
+    }
+    
     return (
         <div className="bg-gray-200 w-full min-h-screen grid place-items-center">
             <div className="bg-gray-900 w-96 h-[30rem] rounded text-white shadow-2xl shadow-gray-800  grid place-items-center relative">
@@ -50,7 +73,7 @@ export const Login = () => {
                     </Link>
                 </div>
                 <div>
-                    <form action="post" className="grid place-items-center ">
+                    <form method="post" className="grid place-items-center ">
                         <div>
                             <h1 className="p-1">Email</h1>
                             <input type="email" placeholder="Email"
@@ -64,7 +87,7 @@ export const Login = () => {
                             <input type="password" placeholder="Password"
                                 className="p-2 rounded text-gray-800 text-lg font-semibold"
                                 value={passwd}
-                                onChange={e => setPasswd(e.target.value)}
+                                onChange={(e) => setPasswd(e.target.value)}
                             />
                         </div>
                         <button
