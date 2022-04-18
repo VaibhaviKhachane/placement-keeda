@@ -1,22 +1,24 @@
 import { Home } from "./routes/home";
-import { Company } from "./routes/company"
-import { Login } from "./routes/login"
-import { SignUp } from "./routes/signup"
+import { Company } from "./routes/company";
+import { Login } from "./routes/login";
+import { SignUp } from "./routes/signup";
+import Student  from "./routes/student";
+import TPO from "./routes/tpo";
 import {
   BrowserRouter,
   Routes,
   Route,
   Link,
 } from "react-router-dom"
-import { roleState } from "./atoms/roleState";
-import { useRecoilValue } from "recoil";
+// import { roleState } from "./atoms/roleState";
+// import { useRecoilValue } from "recoil";
 import { Profile } from "./routes/profile";
 import { Drives } from "./routes/drives";
-import { tokenState } from "./atoms/tokenState"
+// import { tokenState } from "./atoms/tokenState"
 
 function App() {
-  const role = useRecoilValue(roleState);
-  const token = useRecoilValue(tokenState);
+  // const role = useRecoilValue(roleState);
+  // const token = useRecoilValue(tokenState);
   return (
     <div className="App">
       <BrowserRouter>
@@ -25,8 +27,8 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path={`/cmpny`} element={<Company />} />
-          <Route path="/stu" element={<h1>This is Student Page!</h1>} />
-          <Route path="/tpo" element={<h1>This is TPO Page!</h1>} />
+          <Route path="/stu" element={<Student/>}/>
+          <Route path="/tpo" element={<TPO/>} />
           <Route path={`/cmpny/profile`} element={<Profile />} />
           <Route path={`/cmpny/drives`} element={<Drives />} />
           <Route path="*" element={

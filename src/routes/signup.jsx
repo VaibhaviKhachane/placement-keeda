@@ -15,12 +15,12 @@ export const SignUp = () => {
     const [contactNo, setContactNo] = useState("");
     const role = useRecoilValue(roleState);
     const navigate = useNavigate();
-    const [user, setUser] = useRecoilState(userState);
+    const [, setUser] = useRecoilState(userState);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const baseUrl = "http://localhost:8080"
-        let token = await fetch(`${baseUrl}/api/${role}`,
+        // const baseUrl = "http://localhost:4000"
+        let token = await fetch(`/api/cmpny`,
             {
                 method: "post",
                 headers: {
@@ -32,7 +32,7 @@ export const SignUp = () => {
                     "password": passwd,
                     "address": address,
                     "webLink": webLink,
-                    "contactNo": contactNo
+                    "contactno": contactNo
                 })
             });
         if (token.status !== 400) {

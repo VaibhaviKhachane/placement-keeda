@@ -1,14 +1,14 @@
 import { Logo } from "../Logo"
-import { roleState } from "../../atoms/roleState"
-import { useRecoilValue, useRecoilState } from "recoil";
+// import { roleState } from "../../atoms/roleState"
+import {  useRecoilState } from "recoil";
 import { Profile } from "../../routes/profile";
 import { componentState } from "../../atoms/componentState"
 import { Drives } from "../../routes/drives";
 
 
 export const Sidebar = () => {
-    const role = useRecoilValue(roleState);
-    const [component, setComponent] = useRecoilState(componentState);
+    // const role = useRecoilValue(roleState);
+    const [, setComponent] = useRecoilState(componentState);
 
     return (
         <div className="-translate-x-10 -translate-y-10 w-96 min-h-screen bg-gray-900 text-white font-semibold p-10">

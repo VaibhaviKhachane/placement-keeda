@@ -14,7 +14,7 @@ export const Profile = () => {
     const [contactNo, setContactNo] = useState(user.contactNo);
     const [eye, setEye] = useState(false);
     const handleFetch = async () => {
-        const baseUrl = "http://localhost:8080";
+        const baseUrl = "http://localhost:4000";
         const result = await fetch(`${baseUrl}/cmpny/${token}`);
         return result;
     }

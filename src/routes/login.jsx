@@ -5,65 +5,56 @@ import { roleState } from "../atoms/roleState"
 import toast, { Toaster } from 'react-hot-toast';
 import { userState } from "../atoms/user"
 import { tokenState } from "../atoms/tokenState"
+import axios from "axios";
 
 export const Login = () => {
     const [email, setEmail] = useState("");
     const [passwd, setPasswd] = useState("");
     const role = useRecoilValue(roleState);
-    const [token, setToken] = useRecoilState(tokenState);
+    const [, setToken] = useRecoilState(tokenState);
     const navigate = useNavigate();
     const [, setUser] = useRecoilState(userState)
-    const [, setCurrentUser] = useState({});
+    
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-        // const baseUrl = "http://localhost:4000"
-        let res = await fetch(`/api/log${role}`,
-            {
-                method: "post",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ "email": email, "password": passwd })
-            });
-        const result = await res.text();
-        if (res.status === 200) {
-            setToken(result);
-            setUser({
-                email: email,
-                password: passwd,
-            })
-            
-        }
-        else {
-            setEmail("");
-            setPasswd("");
-            toast.error(`Invalid email or password for ${role}`);
-        }  
-
-        
-
-        setTimeout(async()=>{
-            let currentUser = await fetch(`/api/log${role}/me`,{
-                method: "get",
-                headers: {
-                    "x-auth-token": token
-                }
-            });
-            const currUser = await currentUser.text();
-            if (currentUser.status === 200) {
-                setCurrentUser(currUser);
-                navigate(`/${role}`);
+        await axios.post(`/api/log${role}`,{
+            email: email,
+            password: passwd
+        }).then((resp)=> {
+            if(resp.data){
+                setUser({
+                    email: email,
+                    password: passwd
+                });
+                setToken(resp.data);
             }
-            else {
-                setCurrentUser({});
-                toast.error(`Access denied. No token provided for ${role}`);
-            } 
-        },1000);
-        
-
-        
+            return resp;
+        }).then((resp)=> {
+            currUser(resp.data)
+            return resp;
+        })
+        .catch((resp)=> {if(resp.status !== 200) toast.error(`Invalid email or password for ${role}`) });
+        // localStorage.setItem(`${role}`, JSON.stringify(getCurrentUser));
+         
     }
+    const currUser=async(token)=>{
+        await axios.get(`/api/log${role}/me`, {
+            headers:{
+                'x-auth-token': token
+            }
+        })
+        .then((res)=>{
+            if(res.status === 200){ 
+                localStorage.setItem(`${role}`, JSON.stringify(res.data))
+                navigate(`/${role}`);
+            } return res;})
+        .catch((res)=> {if(res) toast.error(`Access denied. No token provided for ${role}`)})
+    }
+  
     
+   
+
     return (
         <div className="bg-gray-200 w-full min-h-screen grid place-items-center">
             <div className="bg-gray-900 w-96 h-[30rem] rounded text-white shadow-2xl shadow-gray-800  grid place-items-center relative">
